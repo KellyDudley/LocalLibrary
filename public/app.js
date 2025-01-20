@@ -10,6 +10,7 @@ class LibraryApp {
     init() {
         this.setupNavigation();
         this.setupForm();
+        this.setupSearch();
         this.displayBooks();
     }
 
@@ -58,6 +59,35 @@ class LibraryApp {
         });
     }
 
+    setupSearch() {
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+
+        const performSearch = () => {
+            const query = searchInput.value.toLowerCase().trim();
+            this.filterBooks(query);
+        };
+
+        searchBtn.addEventListener('click', performSearch);
+        
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            } else {
+                // Real-time search as user types
+                const query = e.target.value.toLowerCase().trim();
+                this.filterBooks(query);
+            }
+        });
+
+        // Clear search when input is empty
+        searchInput.addEventListener('input', (e) => {
+            if (e.target.value === '') {
+                this.displayBooks();
+            }
+        });
+    }
+
     addBook() {
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
@@ -86,15 +116,17 @@ class LibraryApp {
         this.showMessage('Book added successfully!', 'success');
     }
 
-    displayBooks() {
+    displayBooks(booksToShow = null) {
         const container = document.getElementById('books-container');
+        const books = booksToShow || this.books;
         
-        if (this.books.length === 0) {
-            container.innerHTML = '<p class="no-books">No books added yet. Click "Add Book" to get started!</p>';
+        if (books.length === 0) {
+            const message = booksToShow ? 'No books found matching your search.' : 'No books added yet. Click "Add Book" to get started!';
+            container.innerHTML = `<p class="no-books">${message}</p>`;
             return;
         }
 
-        const booksHTML = this.books.map(book => `
+        const booksHTML = books.map(book => `
             <div class="book-card" data-id="${book.id}">
                 <h3>${book.title}</h3>
                 <p class="author">by ${book.author}</p>
@@ -109,6 +141,22 @@ class LibraryApp {
         `).join('');
 
         container.innerHTML = booksHTML;
+    }
+
+    filterBooks(query) {
+        if (!query) {
+            this.displayBooks();
+            return;
+        }
+
+        const filteredBooks = this.books.filter(book => 
+            book.title.toLowerCase().includes(query) ||
+            book.author.toLowerCase().includes(query) ||
+            book.category.toLowerCase().includes(query) ||
+            (book.isbn && book.isbn.toLowerCase().includes(query))
+        );
+
+        this.displayBooks(filteredBooks);
     }
 
     showSection(sectionId) {
