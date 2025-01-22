@@ -1,8 +1,10 @@
 const express = require('express');
 const path = require('path');
+const Database = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const db = new Database();
 
 // Middleware
 app.use(express.json());
@@ -21,4 +23,11 @@ app.get('/api/books', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`LocalLibrary server running on http://localhost:${PORT}`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+    console.log('\nShutting down server...');
+    db.close();
+    process.exit(0);
 });

@@ -1,2 +1,22 @@
 .claude
 CLAUDE.md
+
+# Dependencies
+node_modules/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
