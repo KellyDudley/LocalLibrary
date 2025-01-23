@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const Database = require('./database');
+const BookRoutes = require('./routes/books');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,10 +16,20 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// API endpoints for future expansion
-app.get('/api/books', (req, res) => {
-    // For now, return empty array since we're using localStorage
-    res.json({ message: 'API endpoint ready for future implementation' });
+// Initialize routes after database is ready
+setTimeout(() => {
+    const bookRoutes = new BookRoutes(db);
+    app.use('/api/books', bookRoutes.getRouter());
+    console.log('API routes initialized');
+}, 1000); // Give database time to initialize
+
+// API status endpoint
+app.get('/api/status', (req, res) => {
+    res.json({ 
+        status: 'running',
+        message: 'LocalLibrary API is operational',
+        timestamp: new Date().toISOString()
+    });
 });
 
 app.listen(PORT, () => {
