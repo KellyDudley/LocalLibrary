@@ -11,6 +11,7 @@ class LibraryApp {
         this.setupNavigation();
         this.setupForm();
         this.setupSearch();
+        this.setupModal();
         this.displayBooks();
     }
 
@@ -86,6 +87,81 @@ class LibraryApp {
                 this.displayBooks();
             }
         });
+    }
+
+    setupModal() {
+        const modal = document.getElementById('edit-modal');
+        const closeBtn = document.querySelector('.close');
+        const cancelBtn = document.getElementById('edit-cancel-btn');
+        const editForm = document.getElementById('edit-book-form');
+
+        // Close modal events
+        closeBtn.addEventListener('click', () => this.closeModal());
+        cancelBtn.addEventListener('click', () => this.closeModal());
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeModal();
+            }
+        });
+
+        // Handle edit form submission
+        editForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.updateBook();
+        });
+    }
+
+    openEditModal(bookId) {
+        const book = this.books.find(b => b.id === bookId);
+        if (!book) return;
+
+        // Populate form fields
+        document.getElementById('edit-title').value = book.title;
+        document.getElementById('edit-author').value = book.author;
+        document.getElementById('edit-isbn').value = book.isbn || '';
+        document.getElementById('edit-category').value = book.category;
+        document.getElementById('edit-status').value = book.status || 'unread';
+
+        // Store current book ID for updating
+        this.currentEditingId = bookId;
+
+        // Show modal
+        document.getElementById('edit-modal').style.display = 'block';
+    }
+
+    closeModal() {
+        document.getElementById('edit-modal').style.display = 'none';
+        this.currentEditingId = null;
+    }
+
+    updateBook() {
+        if (!this.currentEditingId) return;
+
+        const title = document.getElementById('edit-title').value;
+        const author = document.getElementById('edit-author').value;
+        const isbn = document.getElementById('edit-isbn').value;
+        const category = document.getElementById('edit-category').value;
+        const status = document.getElementById('edit-status').value;
+
+        const bookIndex = this.books.findIndex(b => b.id === this.currentEditingId);
+        if (bookIndex === -1) return;
+
+        // Update book
+        this.books[bookIndex] = {
+            ...this.books[bookIndex],
+            title,
+            author,
+            isbn,
+            category,
+            status
+        };
+
+        this.saveBooks();
+        this.displayBooks();
+        this.closeModal();
+        this.showMessage('Book updated successfully!', 'success');
     }
 
     addBook() {
@@ -179,8 +255,7 @@ class LibraryApp {
     }
 
     editBook(id) {
-        // TODO: Implement edit functionality
-        console.log('Edit book:', id);
+        this.openEditModal(id);
     }
 
     deleteBook(id) {

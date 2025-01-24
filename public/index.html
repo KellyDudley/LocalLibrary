@@ -66,6 +66,56 @@
         </section>
     </main>
 
+    <!-- Edit Book Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Book</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="edit-book-form">
+                <div class="form-group">
+                    <label for="edit-title">Title:</label>
+                    <input type="text" id="edit-title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-author">Author:</label>
+                    <input type="text" id="edit-author" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-isbn">ISBN:</label>
+                    <input type="text" id="edit-isbn">
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-category">Category:</label>
+                    <select id="edit-category">
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Science">Science</option>
+                        <option value="History">History</option>
+                        <option value="Biography">Biography</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-status">Status:</label>
+                    <select id="edit-status">
+                        <option value="unread">Unread</option>
+                        <option value="reading">Reading</option>
+                        <option value="read">Read</option>
+                    </select>
+                </div>
+                
+                <button type="submit">Update Book</button>
+                <button type="button" id="edit-cancel-btn">Cancel</button>
+            </form>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
