@@ -204,12 +204,14 @@ class LibraryApp {
 
         const booksHTML = books.map(book => `
             <div class="book-card" data-id="${book.id}">
+                <div class="book-status ${book.status || 'unread'}">${this.getStatusLabel(book.status || 'unread')}</div>
                 <h3>${book.title}</h3>
                 <p class="author">by ${book.author}</p>
                 <p class="category">Category: ${book.category}</p>
                 <p class="date">Added: ${book.dateAdded}</p>
                 ${book.isbn ? `<p class="isbn">ISBN: ${book.isbn}</p>` : ''}
                 <div class="book-actions">
+                    <button class="status-btn" onclick="app.toggleStatus('${book.id}')">${this.getStatusAction(book.status || 'unread')}</button>
                     <button class="edit-btn" onclick="app.editBook('${book.id}')">Edit</button>
                     <button class="delete-btn" onclick="app.deleteBook('${book.id}')">Delete</button>
                 </div>
@@ -252,6 +254,47 @@ class LibraryApp {
         if (buttonId) {
             document.getElementById(buttonId).classList.add('active');
         }
+    }
+
+    getStatusLabel(status) {
+        const labels = {
+            'unread': '📚 Unread',
+            'reading': '📖 Reading',
+            'read': '✅ Read'
+        };
+        return labels[status] || labels['unread'];
+    }
+
+    getStatusAction(status) {
+        const actions = {
+            'unread': 'Start Reading',
+            'reading': 'Mark as Read',
+            'read': 'Mark Unread'
+        };
+        return actions[status] || actions['unread'];
+    }
+
+    toggleStatus(id) {
+        const book = this.books.find(b => b.id === id);
+        if (!book) return;
+
+        const statusFlow = {
+            'unread': 'reading',
+            'reading': 'read',
+            'read': 'unread'
+        };
+
+        book.status = statusFlow[book.status || 'unread'];
+        this.saveBooks();
+        this.displayBooks();
+        
+        const statusMsg = {
+            'reading': 'Started reading',
+            'read': 'Marked as read',
+            'unread': 'Marked as unread'
+        };
+        
+        this.showMessage(`${statusMsg[book.status]} "${book.title}"`, 'success');
     }
 
     editBook(id) {

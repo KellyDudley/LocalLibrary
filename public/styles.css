@@ -189,6 +189,7 @@ form button[type="submit"]:hover {
     border-radius: 8px;
     padding: 1.5rem;
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .book-card:hover {
@@ -226,12 +227,43 @@ form button[type="submit"]:hover {
     margin-bottom: 0.3rem;
 }
 
+.book-status {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    border: 1px solid;
+}
+
+.book-status.unread {
+    background: #fff3cd;
+    color: #856404;
+    border-color: #ffeaa7;
+}
+
+.book-status.reading {
+    background: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.book-status.read {
+    background: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+}
+
 .book-actions {
     margin-top: 1rem;
     display: flex;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
+.status-btn,
 .edit-btn,
 .delete-btn {
     padding: 0.5rem 1rem;
@@ -240,6 +272,15 @@ form button[type="submit"]:hover {
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.3s ease;
+}
+
+.status-btn {
+    background: #38a169;
+    color: white;
+}
+
+.status-btn:hover {
+    background: #2f855a;
 }
 
 .edit-btn {
