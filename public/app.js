@@ -3,6 +3,7 @@
 class LibraryApp {
     constructor() {
         this.books = this.loadBooks();
+        this.categories = this.loadCategories();
         this.currentSection = 'book-list';
         this.init();
     }
@@ -12,6 +13,7 @@ class LibraryApp {
         this.setupForm();
         this.setupSearch();
         this.setupModal();
+        this.setupCategories();
         this.displayBooks();
     }
 
@@ -40,7 +42,7 @@ class LibraryApp {
         const sectionMap = {
             'add-book-btn': 'add-book',
             'view-books-btn': 'book-list',
-            'categories-btn': 'book-list' // For now, redirect to book list
+            'categories-btn': 'categories'
         };
         return sectionMap[buttonId] || 'book-list';
     }
@@ -317,6 +319,138 @@ class LibraryApp {
 
     saveBooks() {
         localStorage.setItem('localLibraryBooks', JSON.stringify(this.books));
+    }
+
+    setupCategories() {
+        // Initialize default categories if none exist
+        if (this.categories.length === 0) {
+            this.categories = [
+                { id: '1', name: 'Fiction', color: '#667eea' },
+                { id: '2', name: 'Non-Fiction', color: '#38a169' },
+                { id: '3', name: 'Science', color: '#3182ce' },
+                { id: '4', name: 'History', color: '#d69e2e' },
+                { id: '5', name: 'Biography', color: '#805ad5' },
+                { id: '6', name: 'Other', color: '#718096' }
+            ];
+            this.saveCategories();
+        }
+
+        // Setup category form
+        const addCategoryBtn = document.getElementById('add-category-btn');
+        const categoryForm = document.getElementById('new-category-form');
+        const cancelCategoryBtn = document.getElementById('cancel-category-btn');
+        const addCategoryFormContainer = document.getElementById('add-category-form');
+
+        addCategoryBtn.addEventListener('click', () => {
+            addCategoryFormContainer.style.display = 'block';
+            document.getElementById('category-name').focus();
+        });
+
+        cancelCategoryBtn.addEventListener('click', () => {
+            addCategoryFormContainer.style.display = 'none';
+            categoryForm.reset();
+        });
+
+        categoryForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.addCategory();
+        });
+
+        this.displayCategories();
+    }
+
+    addCategory() {
+        const name = document.getElementById('category-name').value;
+        const color = document.getElementById('category-color').value;
+
+        if (!name.trim()) return;
+
+        const newCategory = {
+            id: Date.now().toString(),
+            name: name.trim(),
+            color: color
+        };
+
+        this.categories.push(newCategory);
+        this.saveCategories();
+        this.displayCategories();
+        
+        // Hide form and reset
+        document.getElementById('add-category-form').style.display = 'none';
+        document.getElementById('new-category-form').reset();
+        
+        this.showMessage(`Category "${name}" added successfully!`, 'success');
+    }
+
+    displayCategories() {
+        const container = document.getElementById('categories-list');
+        const countElement = document.getElementById('category-count');
+        
+        countElement.textContent = this.categories.length;
+
+        if (this.categories.length === 0) {
+            container.innerHTML = '<p class="no-categories">No categories found.</p>';
+            return;
+        }
+
+        const categoriesHTML = this.categories.map(category => {
+            const bookCount = this.books.filter(book => book.category === category.name).length;
+            return `
+                <div class="category-card" style="border-left: 4px solid ${category.color}">
+                    <div class="category-info">
+                        <h3>${category.name}</h3>
+                        <p>${bookCount} book${bookCount !== 1 ? 's' : ''}</p>
+                    </div>
+                    <div class="category-actions">
+                        <button class="edit-btn" onclick="app.editCategory('${category.id}')">Edit</button>
+                        <button class="delete-btn" onclick="app.deleteCategory('${category.id}')">Delete</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = categoriesHTML;
+    }
+
+    editCategory(id) {
+        // TODO: Implement category editing
+        console.log('Edit category:', id);
+    }
+
+    deleteCategory(id) {
+        const category = this.categories.find(c => c.id === id);
+        if (!category) return;
+
+        const bookCount = this.books.filter(book => book.category === category.name).length;
+        
+        if (bookCount > 0) {
+            if (!confirm(`This category has ${bookCount} book${bookCount !== 1 ? 's' : ''}. Deleting it will change those books to "Other" category. Continue?`)) {
+                return;
+            }
+            // Update books with this category to "Other"
+            this.books.forEach(book => {
+                if (book.category === category.name) {
+                    book.category = 'Other';
+                }
+            });
+            this.saveBooks();
+        }
+
+        this.categories = this.categories.filter(c => c.id !== id);
+        this.saveCategories();
+        this.displayCategories();
+        this.displayBooks(); // Refresh books display
+        
+        this.showMessage(`Category "${category.name}" deleted successfully!`, 'success');
+    }
+
+    loadCategories() {
+        const saved = localStorage.getItem('localLibraryCategories');
+        return saved ? JSON.parse(saved) : [];
+    }
+
+    saveCategories() {
+        localStorage.setItem('localLibraryCategories', JSON.stringify(this.categories));
     }
 
     showMessage(text, type = 'info') {
