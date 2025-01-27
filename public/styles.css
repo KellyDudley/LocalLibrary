@@ -78,6 +78,56 @@ main {
     display: block;
 }
 
+/* Dashboard Statistics */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card:nth-child(2) {
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+}
+
+.stat-card:nth-child(3) {
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+}
+
+.stat-card:nth-child(4) {
+    background: linear-gradient(135deg, #d69e2e 0%, #b7791f 100%);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .search-container {
     display: flex;
     gap: 1rem;
@@ -473,6 +523,27 @@ form button[type="submit"]:hover {
     
     main {
         padding: 0;
+    }
+    
+    /* Dashboard stats mobile */
+    .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
     }
     
     /* Book cards mobile */

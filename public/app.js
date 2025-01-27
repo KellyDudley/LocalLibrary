@@ -198,6 +198,11 @@ class LibraryApp {
         const container = document.getElementById('books-container');
         const books = booksToShow || this.books;
         
+        // Update statistics when displaying all books
+        if (!booksToShow) {
+            this.updateStatistics();
+        }
+        
         if (books.length === 0) {
             const message = booksToShow ? 'No books found matching your search.' : 'No books added yet. Click "Add Book" to get started!';
             container.innerHTML = `<p class="no-books">${message}</p>`;
@@ -221,6 +226,18 @@ class LibraryApp {
         `).join('');
 
         container.innerHTML = booksHTML;
+    }
+
+    updateStatistics() {
+        const totalBooks = this.books.length;
+        const readBooks = this.books.filter(book => book.status === 'read').length;
+        const readingBooks = this.books.filter(book => book.status === 'reading').length;
+        const unreadBooks = this.books.filter(book => !book.status || book.status === 'unread').length;
+
+        document.getElementById('total-books').textContent = totalBooks;
+        document.getElementById('books-read').textContent = readBooks;
+        document.getElementById('books-reading').textContent = readingBooks;
+        document.getElementById('books-unread').textContent = unreadBooks;
     }
 
     filterBooks(query) {
